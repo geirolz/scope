@@ -13,12 +13,12 @@ object ProjectDependencies {
 
   lazy val common: Seq[ModuleID] = Seq(
     effects,
-    tests,
+    tests
   ).flatten
 
   private val effects: Seq[ModuleID] = {
     Seq(
-      "org.typelevel" %% "cats-core" % "2.6.1",
+      "org.typelevel" %% "cats-core" % "2.6.1"
     )
   }
 

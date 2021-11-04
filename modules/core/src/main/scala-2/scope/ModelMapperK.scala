@@ -53,10 +53,10 @@ object ModelMapperK extends ModelMapperKInstances {
       apply(Kleisli(f))
 
     def pure[F[_]: Applicative, A, B](b: B): ModelMapperK[F, S, A, B] =
-      apply(_ => Applicative[F].pure(b))
+      lift(_ => b)
 
     def id[F[_]: Applicative, A]: ModelMapperK[F, S, A, A] =
-      apply(Applicative[F].pure(_))
+      lift(identity)
 
     def lift[F[_]: Applicative, A, B](f: A => B): ModelMapperK[F, S, A, B] =
       apply(f.andThen(Applicative[F].pure(_)))
@@ -82,4 +82,27 @@ trait ModelMapperKInstances {
       f: B => A
     ): ModelMapperK[F, S, B, BB] = fa.contramap(f)
   }
+
+  implicit def functorForModelMapperK[F[_]: Functor, S <: Scope, AA, BB]
+    : Functor[ModelMapperK[F, S, AA, *]] =
+    new Functor[ModelMapperK[F, S, AA, *]] {
+      override def map[A, B](fa: ModelMapperK[F, S, AA, A])(f: A => B): ModelMapperK[F, S, AA, B] =
+        fa.map(f)
+    }
+
+  implicit def applicativeForModelMapperK[F[_]: Applicative, S <: Scope, AA, BB]
+    : Applicative[ModelMapperK[F, S, AA, *]] =
+    new Applicative[ModelMapperK[F, S, AA, *]] {
+
+      override def ap[A, B](
+        ff: ModelMapperK[F, S, AA, A => B]
+      )(fa: ModelMapperK[F, S, AA, A]): ModelMapperK[F, S, AA, B] =
+        ModelMapperK.scoped[S](ff.mapper.ap(fa.mapper))
+
+      override def map[A, B](fa: ModelMapperK[F, S, AA, A])(f: A => B): ModelMapperK[F, S, AA, B] =
+        fa.map(f)
+
+      override def pure[A](x: A): ModelMapperK[F, S, AA, A] =
+        ModelMapperK.scoped[S].pure[F, AA, A](x)
+    }
 }

@@ -2,6 +2,60 @@ package scope
 
 class ModelMapperTest extends munit.FunSuite {
 
+  test("Summon an implicit ModelMapper") {
+
+    implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
+      ScopeContext.of[Scope.Domain]
+
+    implicit val m: ModelMapper[Scope.Domain, Int, String] =
+      ModelMapper.scoped[Scope.Domain].apply[Int, String](_.toString)
+
+    assertEquals(
+      obtained = ModelMapper.scoped[Scope.Domain].summon[Int, String].apply(1),
+      expected = "1"
+    )
+  }
+
+  test("Creating a ModelMapper from function A => B") {
+
+    implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
+      ScopeContext.of[Scope.Domain]
+
+    val m = ModelMapper.scoped[Scope.Domain].apply[Int, String](_.toString)
+
+    assertEquals(
+      obtained = m(1),
+      expected = "1"
+    )
+  }
+
+  test("Creating a ModelMapper with Pure") {
+
+    implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
+      ScopeContext.of[Scope.Domain]
+
+    val m = ModelMapper.scoped[Scope.Domain].pure[Int, String]("FOO")
+
+    assertEquals(
+      obtained = m(1),
+      expected = "FOO"
+    )
+  }
+
+  test("Creating a ModelMapper with Id") {
+
+    implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
+      ScopeContext.of[Scope.Domain]
+
+    val m: ModelMapper[Scope.Domain, Int, Int] =
+      ModelMapper.scoped[Scope.Domain].id[Int]
+
+    assertEquals(
+      obtained = m(1),
+      expected = 1
+    )
+  }
+
   test("Using ModelMapper with a ScopeContext provided") {
 
     import scope.syntax.*
