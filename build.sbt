@@ -91,9 +91,9 @@ def enableMdoc(docTitle: String): Project => Project =
         mdocOut := prj.base,
         mdocVariables := Map(
           "ORG"        -> org,
-          "PRJ_NAME"   -> prjName,
+          "PRJ_NAME"   -> prjName.capitalize,
           "DOCS_TITLE" -> docTitle.split(" ").map(_.capitalize).mkString(" "),
-          "VERSION"    -> version.value
+          "VERSION"    -> previousStableVersion.value.getOrElse("<version>")
         )
       )
 
