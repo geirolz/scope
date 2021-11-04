@@ -16,30 +16,30 @@ class ModelMapperK[F[_], S <: Scope, A, B](private[scope] val mapper: Kleisli[F,
     this.asInstanceOf[ModelMapperK[F, S2, A, B]]
 
   def contramap[U](f: U => A): ModelMapperK[F, S, U, B] =
-    ModelMapperK.forScope[S](mapper.local(f))
+    ModelMapperK.scoped[S](mapper.local(f))
 
   def map[C](f: B => C)(implicit F: Functor[F]): ModelMapperK[F, S, A, C] =
-    ModelMapperK.forScope[S](mapper.map(f))
+    ModelMapperK.scoped[S](mapper.map(f))
 
   def mapK[K[_]](f: F ~> K): ModelMapperK[K, S, A, B] =
-    ModelMapperK.forScope[S](mapper.mapK(f))
+    ModelMapperK.scoped[S](mapper.mapK(f))
 
   def flatMap[C, AA <: A](f: B => ModelMapperK[F, S, AA, C])(implicit
     @unused F: FlatMap[F]
   ): ModelMapperK[F, S, AA, C] =
-    ModelMapperK.forScope[S](mapper.flatMap[C, AA](b => f(b).mapper))
+    ModelMapperK.scoped[S](mapper.flatMap[C, AA](b => f(b).mapper))
 
   def flatMapF[C](f: B => F[C])(implicit F: FlatMap[F]): ModelMapperK[F, S, A, C] =
-    ModelMapperK.forScope[S](mapper.flatMapF(f))
+    ModelMapperK.scoped[S](mapper.flatMapF(f))
 
   def squash: ModelMapper[S, A, F[B]] =
-    ModelMapper.forScope[S](mapper.run)
+    ModelMapper.scoped[S](mapper.run)
 }
 object ModelMapperK extends ModelMapperKInstances {
 
   private val builderK: ModelMapperK.BuilderK[Scope] = new ModelMapperK.BuilderK[Scope]
 
-  def forScope[S <: Scope]: ModelMapperK.BuilderK[S] =
+  def scoped[S <: Scope]: ModelMapperK.BuilderK[S] =
     builderK.asInstanceOf[ModelMapperK.BuilderK[S]]
 
   class BuilderK[S <: Scope] private[ModelMapperK] () {
