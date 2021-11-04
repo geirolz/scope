@@ -38,7 +38,7 @@ case class User(id: UserId, name: Name, surname: Surname)
 case class UserContract private(id: Long, name: String, surname: String)
 object UserContract{    
     implicit val modelMapperForUserContract: ModelMapper[Scope.Endpoint, User, UserContract] =
-      ModelMapper.forScope[Scope.Endpoint](user => {
+      ModelMapper.scoped[Scope.Endpoint](user => {
         UserContract(
             user.id.value,
             user.name.value,

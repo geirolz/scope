@@ -7,7 +7,7 @@ class ModelMapperTest extends munit.FunSuite {
     import scope.syntax.*
 
     implicit val m: ModelMapper[Scope.Domain, Int, String] =
-      ModelMapper.forScope[Scope.Domain](_.toString)
+      ModelMapper.scoped[Scope.Domain](_.toString)
 
     implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
@@ -26,7 +26,7 @@ class ModelMapperTest extends munit.FunSuite {
           import scope.ModelMapper
           
           implicit val m: ModelMapper[Scope.Domain, Int, String] = 
-              ModelMapper.forScope[Scope.Domain](_.toString)
+              ModelMapper.scoped[Scope.Domain](_.toString)
               
           implicit val scopeCtx: TypedScopeContext[Scope.Event] =
               ScopeContext.of[Scope.Event]
@@ -50,7 +50,7 @@ class ModelMapperTest extends munit.FunSuite {
           import scope.Scope
           import scope.ModelMapper
           
-          implicit val m: ModelMapper[Scope.Domain, Int, String] = ModelMapper.forScope[Scope.Domain](_.toString)
+          implicit val m: ModelMapper[Scope.Domain, Int, String] = ModelMapper.scoped[Scope.Domain](_.toString)
           
           1.scoped.as[String]                       
      """),
@@ -69,7 +69,7 @@ class ModelMapperTest extends munit.FunSuite {
          import scope.ModelMapperK                    
          import scope.ModelMapper
                              
-         val a : ModelMapperK[Id, Scope.Domain, String, String] = ModelMapperK.forScope[Scope.Domain].id                        
+         val a : ModelMapperK[Id, Scope.Domain, String, String] = ModelMapperK.scoped[Scope.Domain].id                        
          val b : ModelMapper[Scope.Domain, String, String] = a                         
      """),
       expected = ""
