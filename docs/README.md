@@ -11,7 +11,7 @@
 
 ## How to install
 
-```scala
+```sbt
 libraryDependencies += "@ORG@" % "@PRJ_NAME@" % "@VERSION@"
 ```
 
@@ -20,16 +20,15 @@ libraryDependencies += "@ORG@" % "@PRJ_NAME@" % "@VERSION@"
 
 Work in progress
 
-
-
+### Defining the ModelMapper
 ```scala mdoc
 import scope.*
 import scope.syntax.*
 
 //datatypes
-case class UserId(value: Long) extends AnyVal
-case class Name(value: String) extends AnyVal
-case class Surname(value: String) extends AnyVal
+case class UserId(value: Long)
+case class Name(value: String)
+case class Surname(value: String)
 
 //doman models
 case class User(id: UserId, name: Name, surname: Surname)
@@ -46,17 +45,31 @@ object UserContract{
         )
       })
 }
+```
 
+### Using the ModelMapper
+To use the ModelMapper you have to provide the right `ScopeContext` implicitly
 
-//service
-implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] =
-      ScopeContext.of[Scope.Endpoint]
-
+Given
+```scala mdoc:silent
 val user: User = User(
     UserId(1),
     Name("Foo"),
     Surname("Bar"),
 )
-
-val contact: UserContract = user.scoped.as[UserContract]
 ```
+
+```scala mdoc:nest
+implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
+
+user.scoped.as[UserContract]
+```
+
+
+If the `ScopeContext` is wrong or is missing the compilation will fail
+```scala mdoc:nest:fail
+implicit val scopeCtx: TypedScopeContext[Scope.Event] = ScopeContext.of[Scope.Event]
+
+user.scoped.as[UserContract]
+```
+

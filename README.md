@@ -11,8 +11,8 @@
 
 ## How to install
 
-```scala
-libraryDependencies += "com.github.geirolz" % "scope" % "0.0.0+1-8b97f72a+20211103-2246-SNAPSHOT"
+```sbt
+libraryDependencies += "com.github.geirolz" % "scope" % "<version>"
 ```
 
 
@@ -61,7 +61,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@58442ebf
+// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@230e3a8f
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(id = 1L, name = "Foo", surname = "Bar")

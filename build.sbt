@@ -23,7 +23,7 @@ lazy val scope: Project = project
   .in(file("."))
   .settings(allSettings)
   .settings(noPublishSettings)
-//  .configure(enableMdoc(docTitle = prjName))
+  //  .configure(enableMdoc(docTitle = prjName))
   .settings(
     name := prjName,
     description := "A functional and type safe models layer separator",
@@ -33,7 +33,18 @@ lazy val scope: Project = project
 
 //modules
 lazy val core: Project =
-  buildModule("core", toPublish = true, docs = true)
+  buildModule(
+    "core",
+    toPublish = true,
+    docs      = true
+  ).configure(
+    enableMdoc(docTitle = prjName).andThen(
+      _.settings(
+        mdocIn := file("docs"),
+        mdocOut := file(".")
+      )
+    )
+  )
 
 //=============================== MODULES UTILS ===============================
 def buildModule(path: String, toPublish: Boolean = false, docs: Boolean = false): Project = {
@@ -91,7 +102,7 @@ def enableMdoc(docTitle: String): Project => Project =
         mdocOut := prj.base,
         mdocVariables := Map(
           "ORG"        -> org,
-          "PRJ_NAME"   -> prjName.capitalize,
+          "PRJ_NAME"   -> prjName,
           "DOCS_TITLE" -> docTitle.split(" ").map(_.capitalize).mkString(" "),
           "VERSION"    -> previousStableVersion.value.getOrElse("<version>")
         )
