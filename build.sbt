@@ -23,13 +23,12 @@ lazy val scope: Project = project
   .in(file("."))
   .settings(allSettings)
   .settings(noPublishSettings)
-  //  .configure(enableMdoc(docTitle = prjName))
   .settings(
     name := prjName,
     description := "A functional and type safe models layer separator",
     organization := org
   )
-  .dependsOn(core)
+  .aggregate(core)
 
 //modules
 lazy val core: Project =
@@ -47,7 +46,7 @@ lazy val core: Project =
   )
 
 //=============================== MODULES UTILS ===============================
-def buildModule(path: String, toPublish: Boolean = false, docs: Boolean = false): Project = {
+def buildModule(path: String, toPublish: Boolean, docs: Boolean): Project = {
   val keys       = path.split("-")
   val id         = keys.reduce(_ + _.capitalize)
   val docName    = keys.mkString(" ")
@@ -56,12 +55,12 @@ def buildModule(path: String, toPublish: Boolean = false, docs: Boolean = false)
 
   Project(id, prjFile)
     .configure(if (docs) enableMdoc(docTitle = docNameStr) else identity)
-    .settings(allSettings)
     .settings(
       description := moduleName.value,
       moduleName := s"$prjName-$path",
       name := s"$prjName $docName",
-      publish / skip := !toPublish
+      publish / skip := !toPublish,
+      allSettings
     )
 }
 
