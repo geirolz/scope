@@ -12,7 +12,7 @@
 ## How to install
 
 ```sbt
-libraryDependencies += "com.github.geirolz" % "scope" % "0.0.1"
+libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.1"
 ```
 
 
@@ -61,7 +61,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@4ecde
+// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@91fd0ce
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(id = 1L, name = "Foo", surname = "Bar")

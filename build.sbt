@@ -54,14 +54,14 @@ def buildModule(path: String, toPublish: Boolean, docs: Boolean): Project = {
   val prjFile    = file(s"modules/$path")
 
   Project(id, prjFile)
-    .configure(if (docs) enableMdoc(docTitle = docNameStr) else identity)
     .settings(
-      description := moduleName.value,
       moduleName := s"$prjName-$path",
+      description := moduleName.value,
       name := s"$prjName $docName",
       publish / skip := !toPublish,
       allSettings
     )
+    .configure(if (docs) enableMdoc(docTitle = docNameStr) else identity)
 }
 
 //=============================== SETTINGS ===============================
@@ -100,10 +100,11 @@ def enableMdoc(docTitle: String): Project => Project =
         mdocIn := prj.base / "docs",
         mdocOut := prj.base,
         mdocVariables := Map(
-          "ORG"        -> org,
-          "PRJ_NAME"   -> prjName,
-          "DOCS_TITLE" -> docTitle.split(" ").map(_.capitalize).mkString(" "),
-          "VERSION"    -> previousStableVersion.value.getOrElse("<version>")
+          "ORG"         -> org,
+          "PRJ_NAME"    -> prjName,
+          "DOCS_TITLE"  -> docTitle.split(" ").map(_.capitalize).mkString(" "),
+          "MODULE_NAME" -> moduleName.value,
+          "VERSION"     -> previousStableVersion.value.getOrElse("<version>")
         )
       )
 
