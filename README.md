@@ -61,7 +61,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@91fd0ce
+// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@5b7f2cb5
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(id = 1L, name = "Foo", surname = "Bar")
