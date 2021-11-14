@@ -1,8 +1,8 @@
 package scope
 
-import cats.Id
-
 object ModelMapper {
+
+  import cats.*
 
   private val builder: ModelMapper.Builder[Scope] = new ModelMapper.Builder[Scope]
 
@@ -21,6 +21,6 @@ object ModelMapper {
       ModelMapperK.scoped[S].pure(b)
 
     def id[A]: ModelMapper[S, A, A] =
-      ModelMapperK.scoped[S].id
+      ModelMapperK.scoped[S].id[Id, A]
   }
 }
