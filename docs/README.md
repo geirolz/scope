@@ -18,9 +18,9 @@ libraryDependencies += "@ORG@" % "@MODULE_NAME@" % "@VERSION@"
 
 ## How to use
 
-Work in progress
-
 ### Defining the ModelMapper
+
+Given
 ```scala mdoc
 import scope.*
 import scope.syntax.*
@@ -34,7 +34,7 @@ case class Surname(value: String)
 case class User(id: UserId, name: Name, surname: Surname)
 
 //http rest contracts
-case class UserContract private(id: Long, name: String, surname: String)
+case class UserContract(id: Long, name: String, surname: String)
 object UserContract{    
     implicit val modelMapperForUserContract: ModelMapper[Scope.Endpoint, User, UserContract] =
       ModelMapper.scoped[Scope.Endpoint](user => {
@@ -45,6 +45,20 @@ object UserContract{
         )
       })
 }
+```
+
+If the conversion has side effects you can use `ModelMapperK` instead.
+```scala mdoc:nest
+import scala.util.Try
+
+implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] =
+  ModelMapperK.scoped[Scope.Endpoint](user => Try {
+    UserContract(
+        user.id.value,
+        user.name.value,
+        user.surname.value,
+    )
+  })
 ```
 
 ### Using the ModelMapper
@@ -65,6 +79,19 @@ implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope
 user.scoped.as[UserContract]
 ```
 
+---
+
+If the conversion has side effects you have to write 
+```scala mdoc:nest
+import scala.util.Try
+
+user.scoped.as[Try[UserContract]]
+```
+
+In this case if you don't have a `ModelMapperK` defined but just a `ModelMapper` if an `Applicative` instance 
+is available in the scope for your effect `F[_]` the pure `ModelMapper` will be lifted using `Applicative[F].pure(...)`
+
+---
 
 If the `ScopeContext` is wrong or is missing the compilation will fail
 ```scala mdoc:nest:fail
