@@ -9,8 +9,6 @@ import sbt.Keys._
 object ModuleMdocPlugin extends AutoPlugin {
 
   object autoImport {
-    val mdocLibraryDependencies: SettingKey[Seq[sbt.ModuleID]] =
-      settingKey[Seq[ModuleID]]("Declares managed dependencies for the mdoc project.")
     val mdocScalacOptions: SettingKey[Seq[String]] =
       settingKey[Seq[String]]("Options for the Scala compiler in the mdoc project.")
   }
@@ -20,7 +18,6 @@ object ModuleMdocPlugin extends AutoPlugin {
   override def projectSettings: Seq[Setting[_]] = Seq(
     mdocIn := baseDirectory.value / "docs",
     mdocOut := baseDirectory.value,
-    mdocLibraryDependencies := Nil,
     mdocScalacOptions := Nil
   )
 
