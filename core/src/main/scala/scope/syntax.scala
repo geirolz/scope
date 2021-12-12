@@ -10,6 +10,6 @@ private[scope] sealed trait ModelScopeMapperSyntax {
   }
 
   sealed class ScopeOpsForAny[A, S <: Scope] private[scope] (a: A) {
-    implicit def as[B](implicit m: ModelMapper[S, A, B], tsc: TypedScopeContext[S]): B = m.apply(a)
+    def as[B](implicit m: ModelMapper[S, A, B], tsc: TypedScopeContext[S]): B = m.apply(a)
   }
 }
