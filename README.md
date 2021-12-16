@@ -12,7 +12,7 @@
 ## How to install
 
 ```sbt
-libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.4"
+libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.5"
 ```
 
 
