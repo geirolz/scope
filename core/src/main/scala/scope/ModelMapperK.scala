@@ -42,7 +42,7 @@ object ModelMapperK extends ModelMapperKInstances {
   def scoped[S <: Scope]: ModelMapperK.BuilderK[S] =
     builderK.asInstanceOf[ModelMapperK.BuilderK[S]]
 
-  class BuilderK[S <: Scope] private[ModelMapperK] () {
+  class BuilderK[S <: Scope] private[ModelMapperK] {
 
     def summon[F[_], A, B](implicit m: ModelMapperK[F, S, A, B]): ModelMapperK[F, S, A, B] = m
 

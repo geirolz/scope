@@ -1,9 +1,9 @@
 package scope
 
-sealed class ScopeContext private[scope] () {
+sealed class ScopeContext private[scope] {
   type ScopeType <: Scope
 }
-sealed class TypedScopeContext[S <: Scope] private[scope] () extends ScopeContext() {
+sealed class TypedScopeContext[S <: Scope] private[scope] extends ScopeContext {
   type ScopeType = S
 }
 object ScopeContext {

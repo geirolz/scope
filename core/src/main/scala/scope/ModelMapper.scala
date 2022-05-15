@@ -9,7 +9,7 @@ object ModelMapper {
   def scoped[S <: Scope]: ModelMapper.Builder[S] =
     builder.asInstanceOf[ModelMapper.Builder[S]]
 
-  class Builder[S <: Scope] private[ModelMapper] () {
+  class Builder[S <: Scope] private[ModelMapper] {
 
     def summon[A, B](implicit m: ModelMapper[S, A, B]): ModelMapper[S, A, B] =
       ModelMapperK.scoped[S].summon
