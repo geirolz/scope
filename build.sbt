@@ -4,70 +4,105 @@ import ModuleMdocPlugin.autoImport.mdocScalacOptions
 val prjName = "scope"
 val org     = "com.github.geirolz"
 
-inThisBuild(
-  List(
-    organization := org,
-    homepage := Some(url(s"https://github.com/geirolz/$prjName")),
-    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-    developers := List(
-      Developer(
-        "DavidGeirola",
-        "David Geirola",
-        "david.geirola@gmail.com",
-        url("https://github.com/geirolz")
+//## global project to no publish ##
+val copyReadMe = taskKey[Unit]("Copy generated README to main folder.")
+lazy val scope: Project = project
+  .in(file("."))
+  .settings(
+    inThisBuild(
+      List(
+        organization := org,
+        homepage := Some(url(s"https://github.com/geirolz/$prjName")),
+        licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+        developers := List(
+          Developer(
+            "DavidGeirola",
+            "David Geirola",
+            "david.geirola@gmail.com",
+            url("https://github.com/geirolz")
+          )
+        )
       )
     )
   )
-)
-
-//## global project to no publish ##
-lazy val scope: Project = project
-  .in(file("."))
-  .settings(allSettings)
+  .settings(baseSettings)
   .settings(noPublishSettings)
   .settings(
     name := prjName,
     description := "A functional and type safe models layer separator",
-    organization := org
-  )
-  .aggregate(core)
+    organization := org,
 
-//modules
+    // docs
+    copyReadMe := IO.copyFile(file("docs/compiled/README.md"), file("README.md")),
+    (Compile / compile) := (Compile / compile)
+      .dependsOn(copyReadMe.toTask.dependsOn((docs / mdoc).toTask("")))
+      .value
+  )
+  .aggregate(core, docs, generic)
+
+lazy val docs: Project =
+  project
+    .in(file("docs"))
+    .enablePlugins(MdocPlugin)
+    .dependsOn(core)
+    .settings(
+      baseSettings,
+      noPublishSettings,
+      libraryDependencies ++= Seq(
+        ProjectDependencies.Docs.dedicated
+      ).flatten,
+      // config
+      scalacOptions --= Seq("-Werror", "-Xfatal-warnings"),
+      mdocIn := file("docs/source"),
+      mdocOut := file("docs/compiled"),
+      mdocVariables := Map(
+        "VERSION"  -> previousStableVersion.value.getOrElse("<version>"),
+        "DOC_OUT"  -> mdocOut.value.getPath,
+        "PRJ_NAME" -> prjName,
+        "ORG"      -> org
+      )
+    )
+
 lazy val core: Project =
   buildModule(
-    path      = "core",
-    toPublish = true,
-    folder    = "."
+    prjModuleName = "core",
+    toPublish     = true,
+    folder        = "."
   )
 
+lazy val generic: Project =
+  buildModule(
+    prjModuleName = "generic",
+    toPublish     = false, // TODO ENABLE ONCE READY
+    folder        = "modules"
+  ).dependsOn(core)
+    .settings(
+      noPublishSettings, // TODO ENABLE ONCE READY
+      libraryDependencies ++= {
+        CrossVersion.partialVersion(scalaVersion.value) match {
+          case Some((2, _)) => ProjectDependencies.Generic.scala2
+          case Some((3, _)) => ProjectDependencies.Generic.scala3
+          case _            => Nil
+        }
+      }
+    )
+
 //=============================== MODULES UTILS ===============================
-def buildModule(path: String, toPublish: Boolean, folder: String = "modules"): Project = {
-  val keys       = path.split("-")
+def buildModule(prjModuleName: String, toPublish: Boolean, folder: String): Project = {
+  val keys       = prjModuleName.split("-")
   val id         = keys.reduce(_ + _.capitalize)
   val docName    = keys.mkString(" ")
-  val prjFile    = file(s"$folder/$path")
+  val prjFile    = file(s"$folder/$prjModuleName")
   val docNameStr = s"$prjName $docName"
 
   Project(id, prjFile)
     .settings(
       description := moduleName.value,
-      moduleName := s"$prjName-$path",
+      moduleName := s"$prjName-$prjModuleName",
       name := s"$prjName $docName",
       publish / skip := !toPublish,
-      mdocIn := file(s"$folder/docs"),
-      mdocOut := file(folder),
-      mdocScalacOptions := Seq("-Xsource:3"),
-      mdocVariables := Map(
-        "ORG"         -> org,
-        "PRJ_NAME"    -> prjName,
-        "DOCS_TITLE"  -> docNameStr.split(" ").map(_.capitalize).mkString(" "),
-        "MODULE_NAME" -> moduleName.value,
-        "VERSION"     -> previousStableVersion.value.getOrElse("<version>")
-      ),
-      allSettings
+      baseSettings
     )
-    .enablePlugins(ModuleMdocPlugin)
-
 }
 
 //=============================== SETTINGS ===============================
