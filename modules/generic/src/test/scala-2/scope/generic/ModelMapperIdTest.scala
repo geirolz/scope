@@ -15,7 +15,7 @@ class ModelMapperIdTest extends munit.FunSuite {
       ScopeContext.of[Scope.Domain]
 
     implicit val m: ModelMapper[Scope.Domain, Foo, Bar] =
-      ModelMapper.deriveIdMap[Scope.Domain, Foo, Bar]
+      ModelMapper.scoped[Scope.Domain].deriveIdMap[Foo, Bar]
 
     assertEquals(
       obtained = ModelMapper
@@ -41,7 +41,7 @@ class ModelMapperIdTest extends munit.FunSuite {
              ScopeContext.of[Scope.Domain]
           
           implicit val m: ModelMapper[Scope.Domain, Foo, Bar] =
-             ModelMapper.deriveIdMap[Scope.Domain, Foo, Bar]
+             ModelMapper.scoped[Scope.Domain].deriveIdMap[Foo, Bar]
           """
       ),
       expected = """
@@ -59,8 +59,8 @@ class ModelMapperIdTest extends munit.FunSuite {
           |Differences:
           |Map(a -> String)
           |
-          |             ModelMapper.deriveIdMap[Scope.Domain, Foo, Bar]
-          |                                    ^""".stripMargin
+          |             ModelMapper.scoped[Scope.Domain].deriveIdMap[Foo, Bar]
+          |                                                         ^""".stripMargin
     )
   }
 }

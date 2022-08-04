@@ -13,6 +13,7 @@
 
 ```sbt
 libraryDependencies += "@ORG@" % "scope-core" % "@VERSION@"
+libraryDependencies += "@ORG@" % "scope-generic" % "@VERSION@"//optional
 ```
 
 
@@ -47,6 +48,7 @@ object UserContract{
 }
 ```
 
+##### Side effects
 If the conversion has side effects you can use `ModelMapperK` instead.
 ```scala mdoc:nest
 import scala.util.Try
@@ -59,6 +61,30 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
+```
+
+##### Same fields different model
+Often in order to decouple things we just duplicate the same model changing just the name. 
+For example we could find `UserContract` form the endpoint and `User` from the domain that are actually equals deferring only on the name.
+
+In these case macros can same us some boilerplate, importing the `scope-generic` module you can use `deriveIdMap` to derive
+the `ModelMapper` that map the object using the same fields. If the objects aren't equals from the signature point of view the compilation will fail.
+Keep in mind that this macro only supports the primary constructor, smart constructors are not supported.
+
+```scala mdoc:nest
+
+case class User(id: UserId, name: Name, surname: Surname)
+
+case class UserContract(id: UserId, name: Name, surname: Surname)
+object UserContract{    
+        
+    import scope.*
+    import scope.generic.syntax.*
+        
+    implicit val modelMapperForUserContract: ModelMapper[Scope.Endpoint, User, UserContract] =
+      ModelMapper.scoped[Scope.Endpoint].deriveIdMap[User, UserContract]
+}
+
 ```
 
 ### Using the ModelMapper
@@ -79,8 +105,7 @@ implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope
 user.scoped.as[UserContract]
 ```
 
----
-
+##### Side effects
 If the conversion has side effects you have to write 
 ```scala mdoc:nest
 import scala.util.Try
@@ -91,8 +116,8 @@ user.scoped.as[Try[UserContract]]
 In this case if you don't have a `ModelMapperK` defined but just a `ModelMapper` if an `Applicative` instance 
 is available in the scope for your effect `F[_]` the pure `ModelMapper` will be lifted using `Applicative[F].pure(...)`
 
----
 
+### ScopeContext
 If the `ScopeContext` is wrong or is missing the compilation will fail
 ```scala mdoc:nest:fail
 implicit val scopeCtx: TypedScopeContext[Scope.Event] = ScopeContext.of[Scope.Event]

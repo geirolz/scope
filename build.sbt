@@ -44,7 +44,7 @@ lazy val docs: Project =
   project
     .in(file("docs"))
     .enablePlugins(MdocPlugin)
-    .dependsOn(core)
+    .dependsOn(core, generic)
     .settings(
       baseSettings,
       noPublishSettings,

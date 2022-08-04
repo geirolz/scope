@@ -13,6 +13,7 @@
 
 ```sbt
 libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.5"
+libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.5"//optional
 ```
 
 
@@ -47,6 +48,7 @@ object UserContract{
 }
 ```
 
+##### Side effects
 If the conversion has side effects you can use `ModelMapperK` instead.
 ```scala
 import scala.util.Try
@@ -59,7 +61,29 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
-// modelMapperKForUserContract: ModelMapperK[[T >: Nothing <: Any] => Try[T], Endpoint, User, UserContract] = scope.ModelMapperK@3743af7c
+// modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] = scope.ModelMapperK@4b6e0914
+```
+
+##### Same fields different model
+Often in order to decouple things we just duplicate the same model changing just the name. 
+For example we could find `UserContract` form the endpoint and `User` from the domain that are actually equals deferring only on the name.
+
+In these case macros can same us some boilerplate, importing the `scope-generic` module you can use `deriveIdMap` to derive
+the `ModelMapper` that map the object using the same fields. If the objects aren't equals from the signature point of view the compilation will fail.
+Keep in mind that this macro only supports the primary constructor, smart constructors are not supported.
+
+```scala
+case class User(id: UserId, name: Name, surname: Surname)
+
+case class UserContract(id: UserId, name: Name, surname: Surname)
+object UserContract{    
+        
+    import scope.*
+    import scope.generic.syntax.*
+        
+    implicit val modelMapperForUserContract: ModelMapper[Scope.Endpoint, User, UserContract] =
+      ModelMapper.scoped[Scope.Endpoint].deriveIdMap[User, UserContract]
+}
 ```
 
 ### Using the ModelMapper
@@ -76,53 +100,44 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Endpoint] = scope.TypedScopeContext@7e6f9224
+// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@24799ed4
 
 user.scoped.as[UserContract]
-// res0: UserContract = UserContract(id = 1L, name = "Foo", surname = "Bar")
+// res0: UserContract = UserContract(
+//   id = UserId(value = 1L),
+//   name = Name(value = "Foo"),
+//   surname = Surname(value = "Bar")
+// )
 ```
 
----
-
+##### Side effects
 If the conversion has side effects you have to write 
 ```scala
 import scala.util.Try
 
 user.scoped.as[Try[UserContract]]
 // res1: Try[UserContract] = Success(
-//   value = UserContract(id = 1L, name = "Foo", surname = "Bar")
+//   value = UserContract(
+//     id = UserId(value = 1L),
+//     name = Name(value = "Foo"),
+//     surname = Surname(value = "Bar")
+//   )
 // )
 ```
 
 In this case if you don't have a `ModelMapperK` defined but just a `ModelMapper` if an `Applicative` instance 
 is available in the scope for your effect `F[_]` the pure `ModelMapper` will be lifted using `Applicative[F].pure(...)`
 
----
 
+### ScopeContext
 If the `ScopeContext` is wrong or is missing the compilation will fail
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Event] = ScopeContext.of[Scope.Event]
 
 user.scoped.as[UserContract]
-// error:
-// Cannot find a mapper for the scope scopeCtx.ScopeType.
-// I found:
-// 
-//     scope.ModelMapperK.liftPureModelMapper[([A] =>> A), scope.Scope.Event, 
-//       repl.MdocSession.MdocApp.User
-//     , repl.MdocSession.MdocApp.UserContract](cats.Invariant.catsInstancesForId, 
-//       /* missing */
-//         summon[
-//           scope.ModelMapper[scope.Scope.Event, repl.MdocSession.MdocApp.User, 
-//             repl.MdocSession.MdocApp.UserContract
-//           ]
-//         ]
-//     )
-// 
-// But no implicit values were found that match type scope.ModelMapper[scope.Scope.Event, repl.MdocSession.MdocApp.User, 
-//   repl.MdocSession.MdocApp.UserContract
-// ].
+// error: diverging implicit expansion for type scope.ModelMapper[scopeCtx.ScopeType,User,UserContract]
+// starting with method liftPureModelMapper in trait ModelMapperKInstances
 // user.scoped.as[UserContract]
-//                            ^
+//               ^
 ```
 
