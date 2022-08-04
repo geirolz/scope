@@ -21,11 +21,17 @@ class ModelMapperK[F[_], S <: Scope, A, B](private[scope] val mapper: Kleisli[F,
   def map[C](f: B => C)(implicit F: Functor[F]): ModelMapperK[F, S, A, C] =
     ModelMapperK.scoped[S](mapper.map(f))
 
+  def lift[K[_]: Applicative](implicit env: F[Any] =:= Id[Any]): ModelMapperK[K, S, A, B] =
+    mapK[K](new FunctionK[F, K] {
+      def apply[U](fa: F[U]): K[U] =
+        Applicative[K].pure(fa.asInstanceOf[U])
+    })
+
   def mapK[K[_]](f: F ~> K): ModelMapperK[K, S, A, B] =
     ModelMapperK.scoped[S](mapper.mapK(f))
 
   def flatMap[C, AA <: A](f: B => ModelMapperK[F, S, AA, C])(implicit
-    @unused F: FlatMap[F]
+    F: FlatMap[F]
   ): ModelMapperK[F, S, AA, C] =
     ModelMapperK.scoped[S](mapper.flatMap[C, AA](b => f(b).mapper))
 

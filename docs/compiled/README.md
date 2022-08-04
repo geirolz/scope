@@ -59,7 +59,7 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
-// modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] = scope.ModelMapperK@7d02f06f
+// modelMapperKForUserContract: ModelMapperK[[T >: Nothing <: Any] => Try[T], Endpoint, User, UserContract] = scope.ModelMapperK@3743af7c
 ```
 
 ### Using the ModelMapper
@@ -76,7 +76,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@528bea93
+// scopeCtx: TypedScopeContext[Endpoint] = scope.TypedScopeContext@7e6f9224
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(id = 1L, name = "Foo", surname = "Bar")
@@ -104,9 +104,25 @@ If the `ScopeContext` is wrong or is missing the compilation will fail
 implicit val scopeCtx: TypedScopeContext[Scope.Event] = ScopeContext.of[Scope.Event]
 
 user.scoped.as[UserContract]
-// error: diverging implicit expansion for type scope.ModelMapper[scopeCtx.ScopeType,repl.MdocSession.MdocApp.User,repl.MdocSession.MdocApp.UserContract]
-// starting with method liftPureModelMapper in trait ModelMapperKInstances
+// error:
+// Cannot find a mapper for the scope scopeCtx.ScopeType.
+// I found:
+// 
+//     scope.ModelMapperK.liftPureModelMapper[([A] =>> A), scope.Scope.Event, 
+//       repl.MdocSession.MdocApp.User
+//     , repl.MdocSession.MdocApp.UserContract](cats.Invariant.catsInstancesForId, 
+//       /* missing */
+//         summon[
+//           scope.ModelMapper[scope.Scope.Event, repl.MdocSession.MdocApp.User, 
+//             repl.MdocSession.MdocApp.UserContract
+//           ]
+//         ]
+//     )
+// 
+// But no implicit values were found that match type scope.ModelMapper[scope.Scope.Event, repl.MdocSession.MdocApp.User, 
+//   repl.MdocSession.MdocApp.UserContract
+// ].
 // user.scoped.as[UserContract]
-//               ^
+//                            ^
 ```
 

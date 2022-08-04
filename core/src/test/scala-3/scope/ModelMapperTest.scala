@@ -8,7 +8,7 @@ class ModelMapperTest extends munit.FunSuite {
       ScopeContext.of[Scope.Domain]
 
     given ModelMapper[Scope.Domain, Int, String] =
-      ModelMapper.scoped[Scope.Domain].apply[Int, String](_.toString)
+      ModelMapper.scoped[Scope.Domain](_.toString)
 
     assertEquals(
       obtained = ModelMapper.scoped[Scope.Domain].summon[Int, String].apply(1),
@@ -21,7 +21,8 @@ class ModelMapperTest extends munit.FunSuite {
     given TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
 
-    val m = ModelMapper.scoped[Scope.Domain].apply[Int, String](_.toString)
+    val m: ModelMapper[Scope.Domain, Int, String] =
+      ModelMapper.scoped[Scope.Domain](_.toString)
 
     assertEquals(
       obtained = m(1),
@@ -34,7 +35,8 @@ class ModelMapperTest extends munit.FunSuite {
     given TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
 
-    val m = ModelMapper.scoped[Scope.Domain].pure[Int, String]("FOO")
+    val m: ModelMapper[Scope.Domain, Int, String] =
+      ModelMapper.scoped[Scope.Domain].pure("FOO")
 
     assertEquals(
       obtained = m(1),
@@ -48,7 +50,9 @@ class ModelMapperTest extends munit.FunSuite {
       ScopeContext.of[Scope.Domain]
 
     val m: ModelMapper[Scope.Domain, Int, Int] =
-      ModelMapper.scoped[Scope.Domain].id[Int]
+      ModelMapper
+        .scoped[Scope.Domain]
+        .id
 
     assertEquals(
       obtained = m(1),

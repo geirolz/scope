@@ -1,5 +1,7 @@
 package scope
 
+import scala.util.{Success, Try}
+
 class ModelMapperTest extends munit.FunSuite {
 
   test("Summon an implicit ModelMapper") {
@@ -8,7 +10,7 @@ class ModelMapperTest extends munit.FunSuite {
       ScopeContext.of[Scope.Domain]
 
     implicit val m: ModelMapper[Scope.Domain, Int, String] =
-      ModelMapper.scoped[Scope.Domain].apply[Int, String](_.toString)
+      ModelMapper.scoped[Scope.Domain](_.toString)
 
     assertEquals(
       obtained = ModelMapper.scoped[Scope.Domain].summon[Int, String].apply(1),
@@ -21,7 +23,8 @@ class ModelMapperTest extends munit.FunSuite {
     implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
 
-    val m = ModelMapper.scoped[Scope.Domain].apply[Int, String](_.toString)
+    val m: ModelMapper[Scope.Domain, Int, String] =
+      ModelMapper.scoped[Scope.Domain](_.toString)
 
     assertEquals(
       obtained = m(1),
@@ -34,7 +37,9 @@ class ModelMapperTest extends munit.FunSuite {
     implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
 
-    val m = ModelMapper.scoped[Scope.Domain].pure[Int, String]("FOO")
+    val m: ModelMapper[Scope.Domain, Int, String] = ModelMapper
+      .scoped[Scope.Domain]
+      .pure("FOO")
 
     assertEquals(
       obtained = m(1),
@@ -48,12 +53,28 @@ class ModelMapperTest extends munit.FunSuite {
       ScopeContext.of[Scope.Domain]
 
     val m: ModelMapper[Scope.Domain, Int, Int] =
-      ModelMapper.scoped[Scope.Domain].id[Int]
+      ModelMapper
+        .scoped[Scope.Domain]
+        .id
 
     assertEquals(
       obtained = m(1),
       expected = 1
     )
+  }
+
+  test("Lifting a ModelMapper to Try") {
+
+    implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
+      ScopeContext.of[Scope.Domain]
+
+    val m: ModelMapperK[Try, Scope.Domain, Int, Int] =
+      ModelMapper
+        .scoped[Scope.Domain]
+        .id
+        .lift[Try]
+
+    assertEquals(obtained = m(1), expected = Success(1))
   }
 
   test("Using ModelMapper with a ScopeContext provided") {

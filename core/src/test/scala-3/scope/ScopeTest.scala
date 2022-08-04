@@ -2,7 +2,7 @@ package scope
 
 class ScopeTest extends munit.FunSuite {
 
-  test("Cannot create a ScopeContext for the wrong Scope type") {
+  test("Can create custom scope") {
     assertNoDiff(
       obtained = compileErrors("""
          import scope.Scope
