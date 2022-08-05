@@ -19,9 +19,9 @@ object ModelMapperIdMacros {
 
     val a                             = weakTypeOf[A]
     val b                             = weakTypeOf[B]
-    val aMembers: Map[TermName, Type] = getMembers[A]
-    val bMembers: Map[TermName, Type] = getMembers[B]
-    val diff: Map[TermName, Type]     = (aMembers.toSet diff bMembers.toSet).toMap
+    val aParams: Map[TermName, Type] = getMembers[A]
+    val bParams: Map[TermName, Type] = getMembers[B]
+    val diff: Map[TermName, Type]     = (aParams.toSet diff bParams.toSet).toMap
 
     if (diff.isEmpty) {
 
@@ -30,7 +30,7 @@ object ModelMapperIdMacros {
           q"""
                (a: ${a.resultType}) => {
                   new ${b.typeSymbol}(
-                      ..${aMembers.keys.map(name => q"$name = a.$name")}
+                      ..${aParams.keys.map(name => q"$name = a.$name")}
                   )
                }
             """
@@ -49,11 +49,11 @@ object ModelMapperIdMacros {
         s"""
              |Type ${a.typeSymbol.name.toString} and ${b.typeSymbol.name.toString} doesn't have the same constructor.
              |Keep in mind that this macro only support the construction using `new`, smart constructors are not supported yet.
-             |## Type ${a.typeSymbol.name.toString} public members: 
-             |$aMembers
+             |## Type ${a.typeSymbol.name.toString} params: 
+             |$aParams
              |
-             |## Type ${b.typeSymbol.name.toString} public members: 
-             |$bMembers
+             |## Type ${b.typeSymbol.name.toString} params: 
+             |$bParams
              |
              |------------------------------
              |Differences:

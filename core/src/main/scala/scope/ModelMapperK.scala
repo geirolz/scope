@@ -38,7 +38,7 @@ class ModelMapperK[F[_], S <: Scope, A, B](private[scope] val mapper: Kleisli[F,
   def flatMapF[C](f: B => F[C])(implicit F: FlatMap[F]): ModelMapperK[F, S, A, C] =
     ModelMapperK.scoped[S](mapper.flatMapF(f))
 
-  def squash: ModelMapper[S, A, F[B]] =
+  def compile: ModelMapper[S, A, F[B]] =
     ModelMapper.scoped[S](mapper.run)
 }
 object ModelMapperK extends ModelMapperKInstances {
@@ -73,7 +73,7 @@ trait ModelMapperKInstances {
 
   implicit def squashModelMapperK[F[_], S <: Scope, A, B](implicit
     m: ModelMapperK[F, S, A, B]
-  ): ModelMapper[S, A, F[B]] = m.squash
+  ): ModelMapper[S, A, F[B]] = m.compile
 
   implicit def liftPureModelMapper[F[_]: Applicative, S <: Scope, A, B](implicit
     m: ModelMapper[S, A, B]
