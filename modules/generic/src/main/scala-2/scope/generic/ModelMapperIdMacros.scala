@@ -17,11 +17,11 @@ object ModelMapperIdMacros {
       }.toMap
     }
 
-    val a                             = weakTypeOf[A]
-    val b                             = weakTypeOf[B]
+    val a                            = weakTypeOf[A]
+    val b                            = weakTypeOf[B]
     val aParams: Map[TermName, Type] = getMembers[A]
     val bParams: Map[TermName, Type] = getMembers[B]
-    val diff: Map[TermName, Type]     = (aParams.toSet diff bParams.toSet).toMap
+    val diff: Map[TermName, Type]    = (aParams.toSet diff bParams.toSet).toMap
 
     if (diff.isEmpty) {
 

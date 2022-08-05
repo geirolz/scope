@@ -49,10 +49,10 @@ class ModelMapperIdTest extends munit.FunSuite {
           |
           |Type Foo and Bar doesn't have the same constructor.
           |Keep in mind that this macro only support the construction using `new`, smart constructors are not supported yet.
-          |## Type Foo public members: 
+          |## Type Foo params: 
           |Map(a -> String)
           |
-          |## Type Bar public members: 
+          |## Type Bar params: 
           |Map(b -> Int)
           |
           |------------------------------
