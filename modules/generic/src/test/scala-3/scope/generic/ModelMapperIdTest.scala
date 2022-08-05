@@ -8,8 +8,9 @@ class ModelMapperIdTest extends munit.FunSuite {
 
   test("ModelMapper.deriveId") {
 
-    case class Foo(a: String)
-    case class Bar(a: String)
+    case class Test(value: String)
+    case class Foo(a: String, b: Int, c: Test)
+    case class Bar(a: String, b: Int, c: Test)
 
     implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
@@ -21,8 +22,8 @@ class ModelMapperIdTest extends munit.FunSuite {
       obtained = ModelMapper
         .scoped[Scope.Domain]
         .summon[Foo, Bar]
-        .apply(Foo("test")),
-      expected = Bar("test")
+        .apply(Foo("test", 1, Test("my_test"))),
+      expected = Bar("test", 1, Test("my_test"))
     )
   }
 

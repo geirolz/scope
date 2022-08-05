@@ -35,7 +35,7 @@ class ScopeContextTest extends munit.FunSuite {
          summon[ScopeContext]
      """),
       expected = """
-           |error: ambiguous implicit arguments: both given instance given_TypedScopeContext_Endpoint and given instance given_TypedScopeContext_Domain match type scope.ScopeContext of parameter x of method summon in object Predef
+           |error: ambiguous given instances: both given instance given_TypedScopeContext_Endpoint and given instance given_TypedScopeContext_Domain match type scope.ScopeContext of parameter x of method summon in object Predef
            |         summon[ScopeContext]
            |                            ^
            |""".stripMargin
