@@ -61,7 +61,7 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
-// modelMapperKForUserContract: ModelMapperK[[T >: Nothing <: Any] => Try[T], Endpoint, User, UserContract] = scope.ModelMapperK@213d3ca3
+// modelMapperKForUserContract: ModelMapperK[[T >: Nothing <: Any] => Try[T], Endpoint, User, UserContract] = scope.ModelMapperK@4425f6b7
 ```
 
 ##### Same fields different model
@@ -100,7 +100,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Endpoint] = scope.TypedScopeContext@33089df1
+// scopeCtx: TypedScopeContext[Endpoint] = scope.TypedScopeContext@68b73cb5
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(
