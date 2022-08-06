@@ -73,11 +73,10 @@ lazy val core: Project =
 lazy val generic: Project =
   buildModule(
     prjModuleName = "generic",
-    toPublish     = false, // TODO ENABLE ONCE READY
+    toPublish     = true,
     folder        = "modules"
   ).dependsOn(core)
     .settings(
-      noPublishSettings, // TODO ENABLE ONCE READY
       libraryDependencies ++= {
         CrossVersion.partialVersion(scalaVersion.value) match {
           case Some((2, _)) => ProjectDependencies.Generic.scala2
