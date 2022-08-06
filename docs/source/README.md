@@ -13,7 +13,7 @@
 
 ```sbt
 libraryDependencies += "@ORG@" % "scope-core" % "@VERSION@"
-libraryDependencies += "@ORG@" % "scope-generic" % "@VERSION@"//optional
+libraryDependencies += "@ORG@" % "scope-generic" % "@VERSION@"//optional - for scala 2 and 3
 ```
 
 

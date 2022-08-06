@@ -13,7 +13,7 @@
 
 ```sbt
 libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.5"
-libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.5"//optional
+libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.5"//optional - for scala 2 and 3
 ```
 
 
@@ -61,7 +61,7 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
-// modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] = scope.ModelMapperK@578765dc
+// modelMapperKForUserContract: ModelMapperK[[T >: Nothing <: Any] => Try[T], Endpoint, User, UserContract] = scope.ModelMapperK@213d3ca3
 ```
 
 ##### Same fields different model
@@ -100,7 +100,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@176dea50
+// scopeCtx: TypedScopeContext[Endpoint] = scope.TypedScopeContext@33089df1
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(
@@ -135,9 +135,18 @@ If the `ScopeContext` is wrong or is missing the compilation will fail
 implicit val scopeCtx: TypedScopeContext[Scope.Event] = ScopeContext.of[Scope.Event]
 
 user.scoped.as[UserContract]
-// error: diverging implicit expansion for type scope.ModelMapper[scopeCtx.ScopeType,User,UserContract]
-// starting with method liftPureModelMapper in trait ModelMapperKInstances
+// error:
+// Cannot find a mapper for the scope scopeCtx.ScopeType.
+// I found:
+// 
+//     scope.ModelMapperK.liftPureModelMapper[([A] =>> A), scope.Scope.Event, User, 
+//       UserContract
+//     ](cats.Invariant.catsInstancesForId, 
+//       /* missing */summon[scope.ModelMapper[scope.Scope.Event, User, UserContract]]
+//     )
+// 
+// But no implicit values were found that match type scope.ModelMapper[scope.Scope.Event, User, UserContract].
 // user.scoped.as[UserContract]
-//               ^
+//                            ^
 ```
 
