@@ -16,7 +16,7 @@ class ModelMapperIdTest extends munit.FunSuite {
       ScopeContext.of[Scope.Domain]
 
     implicit val m: ModelMapper[Scope.Domain, Foo, Bar] =
-      ModelMapper.scoped[Scope.Domain].deriveIdMap[Foo, Bar]
+      ModelMapper.scoped[Scope.Domain].deriveCaseClassIdMap[Foo, Bar]
 
     assertEquals(
       obtained = ModelMapper
@@ -42,17 +42,17 @@ class ModelMapperIdTest extends munit.FunSuite {
              ScopeContext.of[Scope.Domain]
           
           implicit val m: ModelMapper[Scope.Domain, Foo, Bar] =
-             ModelMapper.scoped[Scope.Domain].deriveIdMap[Foo, Bar]
+             ModelMapper.scoped[Scope.Domain].deriveCaseClassIdMap[Foo, Bar]
           """
       ),
       expected = """error:
                    |
                    |Type Foo and Bar doesn't have the same constructor.
                    |Keep in mind that this macro only support the construction using `new`, smart constructors are not supported yet.
-                   |## Type Foo params: 
+                   |## Type Foo fields:
                    |Map(a -> val a)
                    |
-                   |## Type Bar params: 
+                   |## Type Bar fields:
                    |Map(b -> val b)
                    |
                    |------------------------------

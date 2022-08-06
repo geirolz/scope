@@ -61,14 +61,14 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
-// modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] = scope.ModelMapperK@d91a038
+// modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] = scope.ModelMapperK@578765dc
 ```
 
 ##### Same fields different model
 Often in order to decouple things we just duplicate the same model changing just the name. 
 For example we could find `UserContract` form the endpoint and `User` from the domain that are actually equals deferring only on the name.
 
-In these case macros can same us some boilerplate, importing the `scope-generic` module you can use `deriveIdMap` to derive
+In these case macros can same us some boilerplate, importing the `scope-generic` module you can use `deriveCaseClassIdMap` to derive
 the `ModelMapper` that map the object using the same fields. If the objects aren't equals from the signature point of view the compilation will fail.
 Keep in mind that this macro only supports the primary constructor, smart constructors are not supported.
 
@@ -82,7 +82,7 @@ object UserContract{
     import scope.generic.syntax.*
         
     implicit val modelMapperForUserContract: ModelMapper[Scope.Endpoint, User, UserContract] =
-      ModelMapper.scoped[Scope.Endpoint].deriveIdMap[User, UserContract]
+      ModelMapper.scoped[Scope.Endpoint].deriveCaseClassIdMap[User, UserContract]
 }
 ```
 
@@ -100,7 +100,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@6c6414a8
+// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@176dea50
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(
