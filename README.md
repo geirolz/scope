@@ -2,7 +2,7 @@
 [![Build Status](https://github.com/geirolz/scope/actions/workflows/cicd.yml/badge.svg)](https://github.com/geirolz/scope/actions)
 [![codecov](https://img.shields.io/codecov/c/github/geirolz/scope)](https://codecov.io/gh/geirolz/scope)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/db3274b55e0c4031803afb45f58d4413)](https://www.codacy.com/manual/david.geirola/scope?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=geirolz/scope&amp;utm_campaign=Badge_Grade)
-[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.github.geirolz/scope-core@_2.13?server=https%3A%2F%2Foss.sonatype.org)](https://mvnrepository.com/artifact/com.github.geirolz/scope-core)
+[![Sonatype Nexus (Releases)](https://img.shields.io/nexus/r/com.github.geirolz/scope-core_2.13?nexusVersion=2&server=https%3A%2F%2Foss.sonatype.org)](https://mvnrepository.com/artifact/com.github.geirolz/scope-core)
 [![Scala Steward badge](https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=)](https://scala-steward.org)
 [![Mergify Status](https://img.shields.io/endpoint.svg?url=https://api.mergify.com/v1/badges/geirolz/scope&style=flat)](https://mergify.io)
 [![GitHub license](https://img.shields.io/github/license/geirolz/scope)](https://github.com/geirolz/scope/blob/main/LICENSE)
@@ -12,8 +12,8 @@
 ## How to install
 
 ```sbt
-libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.5"
-libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.5"//optional - for scala 2 and 3
+libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.6"
+libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.6"//optional - for scala 2 and 3
 ```
 
 
@@ -61,7 +61,7 @@ implicit val modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User
         user.surname.value,
     )
   })
-// modelMapperKForUserContract: ModelMapperK[[T >: Nothing <: Any] => Try[T], Endpoint, User, UserContract] = scope.ModelMapperK@4425f6b7
+// modelMapperKForUserContract: ModelMapperK[Try, Scope.Endpoint, User, UserContract] = scope.ModelMapperK@30568f3f
 ```
 
 ##### Same fields different model
@@ -100,7 +100,7 @@ val user: User = User(
 
 ```scala
 implicit val scopeCtx: TypedScopeContext[Scope.Endpoint] = ScopeContext.of[Scope.Endpoint]
-// scopeCtx: TypedScopeContext[Endpoint] = scope.TypedScopeContext@68b73cb5
+// scopeCtx: TypedScopeContext[Scope.Endpoint] = scope.TypedScopeContext@6ae7609c
 
 user.scoped.as[UserContract]
 // res0: UserContract = UserContract(
@@ -135,18 +135,9 @@ If the `ScopeContext` is wrong or is missing the compilation will fail
 implicit val scopeCtx: TypedScopeContext[Scope.Event] = ScopeContext.of[Scope.Event]
 
 user.scoped.as[UserContract]
-// error:
-// Cannot find a mapper for the scope scopeCtx.ScopeType.
-// I found:
-// 
-//     scope.ModelMapperK.liftPureModelMapper[([A] =>> A), scope.Scope.Event, User, 
-//       UserContract
-//     ](cats.Invariant.catsInstancesForId, 
-//       /* missing */summon[scope.ModelMapper[scope.Scope.Event, User, UserContract]]
-//     )
-// 
-// But no implicit values were found that match type scope.ModelMapper[scope.Scope.Event, User, UserContract].
+// error: diverging implicit expansion for type scope.ModelMapper[scopeCtx.ScopeType,User,UserContract]
+// starting with method liftPureModelMapper in trait ModelMapperKInstances
 // user.scoped.as[UserContract]
-//                            ^
+//               ^
 ```
 
