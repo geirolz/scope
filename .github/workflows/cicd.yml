@@ -39,9 +39,10 @@ jobs:
       - uses: actions/checkout@v2
 
       #----------- JDK -----------
-      - name: Set up JDK 17
+      - name: Setup JDK
         uses: actions/setup-java@v3.4.1
         with:
+          distribution: "liberica"
           java-version: 17
 
       #----------- CACHE -----------
@@ -71,9 +72,10 @@ jobs:
       - uses: actions/checkout@v2
 
       #----------- JDK -----------
-      - name: Set up JDK 17
+      - name: Setup JDK
         uses: actions/setup-java@v3.4.1
         with:
+          distribution: "liberica"
           java-version: 17
 
       #----------- CACHE -----------
