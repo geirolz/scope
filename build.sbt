@@ -1,8 +1,11 @@
 import sbt.project
 import ModuleMdocPlugin.autoImport.mdocScalacOptions
 
-val prjName = "scope"
-val org     = "com.github.geirolz"
+val prjName                     = "scope"
+val org                         = "com.github.geirolz"
+lazy val scala213               = "2.13.8"
+lazy val scala31                = "3.1.3"
+lazy val supportedScalaVersions = List(scala213, scala31)
 
 //## global project to no publish ##
 val copyReadMe = taskKey[Unit]("Copy generated README to main folder.")
@@ -31,12 +34,10 @@ lazy val scope: Project = project
     name := prjName,
     description := "A functional and type safe models layer separator",
     organization := org,
-
-    // docs
-    copyReadMe := IO.copyFile(file("docs/compiled/README.md"), file("README.md")),
-    (Compile / compile) := (Compile / compile)
-      .dependsOn(copyReadMe.toTask.dependsOn((docs / mdoc).toTask("")))
-      .value
+    crossScalaVersions := Nil
+  )
+  .settings(
+    copyReadMe := IO.copyFile(file("docs/compiled/README.md"), file("README.md"))
   )
   .aggregate(core, docs, generic)
 
@@ -105,20 +106,19 @@ def buildModule(prjModuleName: String, toPublish: Boolean, folder: String): Proj
 }
 
 //=============================== SETTINGS ===============================
-lazy val allSettings = baseSettings
-
-lazy val noPublishSettings = Seq(
+lazy val noPublishSettings: Seq[Def.Setting[_]] = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false,
   publish / skip := true
 )
 
-lazy val baseSettings = Seq(
+lazy val baseSettings: Seq[Def.Setting[_]] = Seq(
   // scala
-  crossScalaVersions := List("2.13.8", "3.1.3"),
-  scalaVersion := crossScalaVersions.value.head,
+  crossScalaVersions := supportedScalaVersions,
+  scalaVersion := supportedScalaVersions.head,
   scalacOptions ++= scalacSettings(scalaVersion.value),
+  versionScheme := Some("early-semver"),
   // dependencies
   resolvers ++= ProjectResolvers.all,
   libraryDependencies ++= ProjectDependencies.common ++ {
@@ -142,7 +142,8 @@ def scalacSettings(scalaVersion: String): Seq[String] =
     "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
     "-language:experimental.macros", // Allow macro definition (besides implementation and application)
     "-language:higherKinds", // Allow higher-kinded types
-    "-language:implicitConversions" // Allow definition of implicit functions called views
+    "-language:implicitConversions", // Allow definition of implicit functions called views
+    "-language:dynamics"
   ) ++ {
     CrossVersion.partialVersion(scalaVersion) match {
       case Some((3, _)) =>
@@ -194,3 +195,4 @@ def scalacSettings(scalaVersion: String): Seq[String] =
 
 //=============================== ALIASES ===============================
 addCommandAlias("check", ";clean;test")
+addCommandAlias("generate-docs", "mdoc;copyReadMe;")
