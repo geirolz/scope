@@ -4,8 +4,8 @@ import ModuleMdocPlugin.autoImport.mdocScalacOptions
 val prjName                     = "scope"
 val org                         = "com.github.geirolz"
 lazy val scala213               = "2.13.8"
-lazy val scala31                = "3.1.3"
-lazy val supportedScalaVersions = List(scala213, scala31)
+lazy val scala32                = "3.2.1"
+lazy val supportedScalaVersions = List(scala213, scala32)
 
 //## global project to no publish ##
 val copyReadMe = taskKey[Unit]("Copy generated README to main folder.")

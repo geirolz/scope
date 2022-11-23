@@ -106,7 +106,7 @@ class ModelMapperTest extends munit.FunSuite {
           1.scoped.as[String]                       
      """),
       expected = """
-           |error: no given instance of type scope.ScopeContext was found for parameter ctx of method scoped in class ModelScopeMapperSyntaxOps
+           |error: No given instance of type scope.ScopeContext was found for parameter ctx of method scoped in class ModelScopeMapperSyntaxOps
            |          1.scoped.as[String]
            |                 ^
            |""".stripMargin
