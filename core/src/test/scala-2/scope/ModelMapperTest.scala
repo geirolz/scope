@@ -52,6 +52,7 @@ class ModelMapperTest extends munit.FunSuite {
     implicit val scopeCtx: TypedScopeContext[Scope.Domain] =
       ScopeContext.of[Scope.Domain]
 
+    val aa: Exist[Int ==> Int] In Scope.Domain = ???
     val m: ModelMapper[Scope.Domain, Int, Int] =
       ModelMapper
         .scoped[Scope.Domain]
