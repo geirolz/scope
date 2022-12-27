@@ -32,6 +32,9 @@ lazy val scope: Project = project
   .settings(baseSettings)
   .settings(noPublishSettings)
   .settings(
+    crossScalaVersions := Nil
+  )
+  .settings(
     copyReadMe := IO.copyFile(file("docs/compiled/README.md"), file("README.md"))
   )
   .aggregate(core, docs, generic)
