@@ -33,7 +33,7 @@ jobs:
             test-tasks: coverage test coverageReport gen-doc
           - scala: 3.2.1
             name: Scala3_2
-            test-tasks: coverage test coverageReport
+            test-tasks: test # scoverage do not supported for scala 3 macros
 
     steps:
       - uses: actions/checkout@v3
