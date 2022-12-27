@@ -1,9 +1,11 @@
 import sbt.project
 import ModuleMdocPlugin.autoImport.mdocScalacOptions
 
-val prjName                     = "scope"
-val org                         = "com.github.geirolz"
-lazy val scala213               = "2.13.8"
+lazy val prjName                = "scope"
+lazy val prjPackageName         = prjName.replaceAll("[^\\p{Alpha}\\d]+", ".")
+lazy val prjDescription         = "A functional and type safe models layer separator"
+lazy val prjOrg                 = "com.github.geirolz"
+lazy val scala213               = "2.13.10"
 lazy val scala32                = "3.2.1"
 lazy val supportedScalaVersions = List(scala213, scala32)
 
@@ -14,7 +16,6 @@ lazy val scope: Project = project
   .settings(
     inThisBuild(
       List(
-        organization := org,
         homepage := Some(url(s"https://github.com/geirolz/$prjName")),
         licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
         developers := List(
@@ -30,12 +31,6 @@ lazy val scope: Project = project
   )
   .settings(baseSettings)
   .settings(noPublishSettings)
-  .settings(
-    name := prjName,
-    description := "A functional and type safe models layer separator",
-    organization := org,
-    crossScalaVersions := Nil
-  )
   .settings(
     copyReadMe := IO.copyFile(file("docs/compiled/README.md"), file("README.md"))
   )
@@ -60,7 +55,7 @@ lazy val docs: Project =
         "VERSION"  -> previousStableVersion.value.getOrElse("<version>"),
         "DOC_OUT"  -> mdocOut.value.getPath,
         "PRJ_NAME" -> prjName,
-        "ORG"      -> org
+        "ORG"      -> prjOrg
       )
     )
 
@@ -90,12 +85,11 @@ lazy val generic: Project =
 //=============================== MODULES UTILS ===============================
 def buildModule(prjModuleName: String, toPublish: Boolean, folder: String): Project = {
   val keys       = prjModuleName.split("-")
-  val id         = keys.reduce(_ + _.capitalize)
   val docName    = keys.mkString(" ")
   val prjFile    = file(s"$folder/$prjModuleName")
   val docNameStr = s"$prjName $docName"
 
-  Project(id, prjFile)
+  Project(prjModuleName, prjFile)
     .settings(
       description := moduleName.value,
       moduleName := s"$prjName-$prjModuleName",
@@ -114,6 +108,10 @@ lazy val noPublishSettings: Seq[Def.Setting[_]] = Seq(
 )
 
 lazy val baseSettings: Seq[Def.Setting[_]] = Seq(
+  // project
+  name := prjName,
+  description := prjDescription,
+  organization := prjOrg,
   // scala
   crossScalaVersions := supportedScalaVersions,
   scalaVersion := supportedScalaVersions.head,

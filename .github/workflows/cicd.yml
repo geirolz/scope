@@ -28,12 +28,12 @@ jobs:
       matrix:
         # supported scala versions
         include:
-          - scala: 2.13.8
-            name: Scala2
-            test-tasks: coverage test coverageReport generate-docs
+          - scala: 2.13.10
+            name: Scala2_13
+            test-tasks: coverage test coverageReport gen-doc
           - scala: 3.2.1
-            name: Scala32
-            test-tasks: test # scoverage doesn’t support Scala 3
+            name: Scala3_2
+            test-tasks: coverage test coverageReport
 
     steps:
       - uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
 
       #----------- CACHE -----------
       - name: Cache SBT
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.1
         with:
           # A list of files, directories, and wildcard patterns to cache and restore
           path: |
@@ -80,7 +80,7 @@ jobs:
 
       #----------- CACHE -----------
       - name: Cache SBT
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.1
         with:
           # A list of files, directories, and wildcard patterns to cache and restore
           path: |
