@@ -193,4 +193,4 @@ def scalacSettings(scalaVersion: String): Seq[String] =
 
 //=============================== ALIASES ===============================
 addCommandAlias("check", ";clean;test")
-addCommandAlias("gen-docs", "mdoc;copyReadMe;")
+addCommandAlias("gen-doc", "mdoc;copyReadMe;")
