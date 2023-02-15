@@ -42,7 +42,7 @@ object UserContract{
         UserContract(
             user.id.value,
             user.name.value,
-            user.surname.value,
+            user.surname.value
         )
       })
 }

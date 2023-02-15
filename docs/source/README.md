@@ -95,7 +95,7 @@ Given
 val user: User = User(
     UserId(1),
     Name("Foo"),
-    Surname("Bar"),
+    Surname("Bar")
 )
 ```
 
