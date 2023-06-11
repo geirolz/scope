@@ -25,7 +25,7 @@ object ProjectDependencies {
 
   object Generic {
     val scala2: Seq[ModuleID] = Seq(
-      "org.scala-lang" % "scala-reflect" % "2.13.10"
+      "org.scala-lang" % "scala-reflect" % "2.13.11"
     )
     val scala3: Seq[ModuleID] = Nil
   }
