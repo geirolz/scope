@@ -7,7 +7,7 @@
 [![Mergify Status](https://img.shields.io/endpoint.svg?url=https://api.mergify.com/v1/badges/geirolz/scope&style=flat)](https://mergify.io)
 [![GitHub license](https://img.shields.io/github/license/geirolz/scope)](https://github.com/geirolz/scope/blob/main/LICENSE)
 
----
+A functional, compile-time and type-safe models layer separator
 
 ## How to install
 
