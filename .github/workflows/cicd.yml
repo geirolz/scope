@@ -28,7 +28,7 @@ jobs:
       matrix:
         # supported scala versions
         include:
-          - scala: 2.13.10
+          - scala: 2.13.12
             name: Scala2_13
             test-tasks: coverage test coverageReport gen-doc
           - scala: 3.2.2
@@ -36,7 +36,7 @@ jobs:
             test-tasks: test # scoverage do not supported for scala 3 macros
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       #----------- JDK -----------
       - name: Setup JDK
@@ -47,7 +47,7 @@ jobs:
 
       #----------- CACHE -----------
       - name: Cache SBT
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           # A list of files, directories, and wildcard patterns to cache and restore
           path: |
@@ -69,7 +69,7 @@ jobs:
     needs: [build]
     if: github.event_name != 'pull_request'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       #----------- JDK -----------
       - name: Setup JDK
@@ -80,7 +80,7 @@ jobs:
 
       #----------- CACHE -----------
       - name: Cache SBT
-        uses: actions/cache@v3.3.1
+        uses: actions/cache@v3.3.2
         with:
           # A list of files, directories, and wildcard patterns to cache and restore
           path: |
