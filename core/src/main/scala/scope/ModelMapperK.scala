@@ -8,7 +8,7 @@ import scala.annotation.{implicitAmbiguous, implicitNotFound, unused}
 
 @implicitNotFound(msg = "Cannot find a mapper for the scope ${S}")
 @implicitAmbiguous(msg = "Multiple mapper for the same type ${M2} and same scope ${S}")
-class ModelMapperK[F[_], S <: Scope, A, B](private[scope] val mapper: Kleisli[F, A, B]) {
+class ModelMapperK[F[_], S <: Scope, -A, B](private[scope] val mapper: Kleisli[F, A, B]) {
 
   def apply(a: A)(implicit @unused scopeContext: TypedScopeContext[S]): F[B] = mapper(a)
 
