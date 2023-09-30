@@ -2,7 +2,7 @@ import sbt._
 
 object ProjectDependencies {
 
-  private val catsVersion  = "2.9.0"
+  private val catsVersion  = "2.10.0"
   private val munitVersion = "0.7.29"
 
   lazy val common: Seq[ModuleID] = Seq(
