@@ -12,8 +12,8 @@ A functional, compile-time and type-safe models layer separator
 ## How to install
 
 ```sbt
-libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.7"
-libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.7"//optional - for scala 2 and 3
+libraryDependencies += "com.github.geirolz" % "scope-core" % "0.0.10"
+libraryDependencies += "com.github.geirolz" % "scope-generic" % "0.0.10"//optional - for scala 2 and 3
 ```
 
 
