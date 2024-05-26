@@ -3,7 +3,7 @@ import sbt._
 object ProjectDependencies {
 
   private val catsVersion  = "2.10.0"
-  private val munitVersion = "0.7.29"
+  private val munitVersion = "1.0.0"
 
   lazy val common: Seq[ModuleID] = Seq(
     "org.typelevel" %% "cats-core" % catsVersion,
